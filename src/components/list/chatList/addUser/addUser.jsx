@@ -19,8 +19,8 @@ import { toast } from "react-toastify";
 
 const AddUser = () => {
   const [user, setUser] = useState(null);
-
   const { currentUser } = useUserStore();
+
 
   const handleSearch = async (e) => {
     e.preventDefault();
