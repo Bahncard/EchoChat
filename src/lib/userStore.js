@@ -36,6 +36,5 @@ updateUserBio: async (bio) => {
       console.log(err);
     }
   },
-
     
 }));

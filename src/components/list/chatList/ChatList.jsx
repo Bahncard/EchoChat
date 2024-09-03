@@ -77,6 +77,7 @@ const ChatList = () => {
             type="text"
             placeholder="Search"
             onChange={(e) => setInput(e.target.value)}
+            className="text-black dark:text-white bg-white dark:bg-gray-800"
           />
         </div>
         <img

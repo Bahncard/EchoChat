@@ -77,7 +77,7 @@ const AddUser = () => {
   return (
     <div className="addUser">
       <form onSubmit={handleSearch}>
-        <input type="text" placeholder="Username" name="username" />
+        <input type="text" placeholder="Username" name="username" className="text-black" />
         <button>Search</button>
       </form>
       {user && (

@@ -1,14 +1,40 @@
 import "./userInfo.css"
 import { useUserStore } from "../../../lib/userStore";
-import { useState, useRef, useEffect } from "react";
-
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import {auth} from '../../../lib/firebase'
+import useClickOutside from "../../../hooks/useClickOutside"
 const Userinfo = () => {
+
+  const navigate = useNavigate();
 
   const { currentUser, updateUserBio } = useUserStore();
   // Edit bio
   const [isEditing, setIsEditing] = useState(false);
   const [bio, setBio] = useState("");
-  const bioEditRef = useRef(null);
+ 
+  // More menu: Logout, Settings, Delete Account
+  const [showMenu, setShowMenu] = useState(false);
+ 
+  // Get the ref of the menu and bio edit with useClickOutside hook
+  const menuRef = useClickOutside(() => setShowMenu(false));
+  const bioEditRef = useClickOutside(() => setIsEditing(false));
+
+  const handleMoreClick = () => {
+    setShowMenu(!showMenu);
+  };
+
+  const handleLogout = async () => {
+        signOut(auth).then(() => {
+        // Sign-out successful.
+            navigate("/");
+            console.log("Signed out successfully")
+        }).catch((error) => {
+          console.log(error)
+        });
+};
+
 
   const handleEditClick = () => {
     setIsEditing(true);
@@ -19,18 +45,7 @@ const Userinfo = () => {
     setIsEditing(false);
   };
 
-  useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (bioEditRef.current && !bioEditRef.current.contains(event.target)) {
-      setIsEditing(false);
-    }
-  };
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, []);
 
   return (
     <div className='userInfo relative'>
@@ -39,7 +54,25 @@ const Userinfo = () => {
         <h2>{currentUser.username}</h2>
       </div>
       <div className="icons">
-        <img src="./more.png" alt="" />
+        <img src="./more.png" alt=""  onClick={handleMoreClick}/>
+          {showMenu && (
+            <div 
+              ref={menuRef}
+              className="absolute right-0 mt-2 w-48 bg-gray-700 bg-opacity-90 border border-gray-600 rounded-md shadow-lg z-20"
+            >
+              <ul>
+                <li 
+                  className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </li>
+                <li className="px-4 py-2 hover:bg-gray-600 cursor-pointer text-white">
+                  Settings
+                </li>
+              </ul>
+            </div>
+          )}
         <img src="./video.png" alt="" />
         <img src="./edit.png" alt="" onClick={handleEditClick} />
       </div>
