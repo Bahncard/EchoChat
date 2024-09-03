@@ -164,7 +164,8 @@ const [registerLoading, setRegisterLoading] = useState(false);
   return (
     <div className="login">
       <div className="item">
-        <h2>Welcome back,</h2>
+        <h2 
+        className="text-2xl font-semibold text-white -ml-[50px] ">Welcome back,</h2>
         <form onSubmit={handleLogin}>
           <input type="text" placeholder="Email" name="email" />
           <input type="password" placeholder="Password" name="password" />
@@ -172,9 +173,18 @@ const [registerLoading, setRegisterLoading] = useState(false);
         </form>
       </div>
       <div className="separator"></div>
+      {/* <div className="item">
+        <div className="header-container"> 
+        <p className="text-sm text-gray-400 mb-2 self-start px-5">Don&apos;t have an account?</p>
+        <h2>Sign Up</h2>
+        </div> */}
       <div className="item">
-        <h2>Create an Account</h2>
-        <form onSubmit={handleRegister}>
+        <div className="header-container -ml-[90px]">
+          <p className="text-sm text-gray-400 mb-1 self-start">Don&apos;t have an account?</p>
+          <h2 className="text-2xl font-semibold text-white mb-2 self-start">Sign Up</h2>
+        </div>
+ 
+        <form onSubmit={handleRegister} className="px-5">
           <label htmlFor="file">
             <img src={avatar.url || "./avatar.png"} alt="" />
             Upload an image

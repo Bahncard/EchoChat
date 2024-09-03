@@ -12,12 +12,15 @@
     align-items: center;
     gap: 20px;
 
+ 
+
     form {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: strech;
       justify-content: center;
       gap: 20px;
+
 
       input {
         padding: 20px;
@@ -69,3 +72,5 @@
     background-color: #dddddd35;
   }
 }
+
+ 

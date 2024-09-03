@@ -17,7 +17,7 @@ import { format } from "timeago.js";
 
 const Chat = () => {
   const [chat, setChat] = useState();
-    const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   //State of the emoji picker
   const [open, setOpen] = useState(false);
   //State of the text input
@@ -26,6 +26,7 @@ const Chat = () => {
     file: null,
     url: "",
   });
+  const [previewImage, setPreviewImage] = useState(null);
 
   const { currentUser } = useUserStore();
   const { chatId, user, isCurrentUserBlocked, isReceiverBlocked, sharePhoto } =
@@ -33,6 +34,15 @@ const Chat = () => {
 
   const endRef = useRef(null);
 
+  const handleImageClick = (imageSrc) => {
+    setPreviewImage(imageSrc);
+  };
+
+  const closeImagePreview = () => {
+    setPreviewImage(null);
+  };
+  
+  // Scroll to the end of the chat when messages are added
   useEffect(() => {
     if (chat?.messages?.length) {
       endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -88,27 +98,7 @@ const Chat = () => {
   const handleSend = async () => {
     if (text === "" && !img.file ) return;
 
-    // let imgUrl = null;
 
-    // try {
-    //   if (img.file) {
-    //     imgUrl = await upload(img.file);
-    //   }
-    //   //Send Image message
-
-    //   await updateDoc(doc(db, "chats", chatId), {
-    //     messages: arrayUnion({
-    //       senderId: currentUser.id,
-    //       text,
-    //       createdAt: new Date(),
-    //       ...(imgUrl && { img: imgUrl }),
-    //     }),
-    //   });
-
-    //   // If the message contains an image, add it to the shared photos
-    //   if (imgUrl) {
-    //     await sharePhoto(imgUrl);
-    //   }
        try {
       if (img.file) {
         const imgUrl = await upload(img.file);
@@ -125,7 +115,7 @@ const Chat = () => {
         await sharePhoto(imgUrl);
       }
 
-      if (text !== "") {
+      if (text.trim()) {
         // Send Text message
         await updateDoc(doc(db, "chats", chatId), {
           messages: arrayUnion({
@@ -204,7 +194,14 @@ const Chat = () => {
             key={message?.createdAt.toMillis()}
           >
             <div className="texts">
-              {message.img && <img src={message.img} alt="" />}
+              {message.img && (
+                <img
+                  src={message.img}
+                  alt=""
+                  onClick={() => handleImageClick(message.img)}
+                  className="cursor-pointer"
+                />
+              )}
               <p>{message.text}</p>
               <span>{format(message.createdAt.toDate())}</span>
             </div>

@@ -5,11 +5,12 @@ import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_API_KEY,
-  authDomain: "chat-app-bahncard.firebaseapp.com",
-  projectId: "chat-app-bahncard",
-  storageBucket: "chat-app-bahncard.appspot.com",
-  messagingSenderId: "35879670832",
-  appId: "1:35879670832:web:114e2a209622e6565f89f5",
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID,
+
 };
 
 // Initialize Firebase
