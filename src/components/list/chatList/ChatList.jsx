@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./chatList.css";
 import AddUser from "./addUser/addUser";
 import { useUserStore } from "../../../lib/userStore";
@@ -10,9 +10,12 @@ const ChatList = () => {
   const [chats, setChats] = useState([]);
   const [addMode, setAddMode] = useState(false);
   const [input, setInput] = useState("");
+  const [contextMenu, setContextMenu] = useState(null);
 
-  const { currentUser } = useUserStore();
+  const { currentUser, deleteChat, prioritizeChat } = useUserStore();
   const { chatId, changeChat } = useChatStore();
+
+  const contextMenuRef = useRef(null);
 
   useEffect(() => {
     const unSub = onSnapshot(
@@ -64,6 +67,32 @@ const ChatList = () => {
     }
   };
 
+  //Right click chat item to delete and prioritize
+   const handleContextMenu = (e, chat) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      chat: chat
+    });
+  }; 
+
+  
+  const handleDelete = async () => {
+    if (contextMenu) {
+      await deleteChat(contextMenu.chat.chatId);
+      setContextMenu(null);
+    }
+  };
+
+  const handlePrioritize = async () => {
+    if (contextMenu) {
+      await prioritizeChat(contextMenu.chat.chatId);
+      setContextMenu(null);
+    }
+  };
+ 
+
   const filteredChats = chats.filter((c) =>
     c.user.username.toLowerCase().includes(input.toLowerCase())
   );
@@ -92,6 +121,7 @@ const ChatList = () => {
           className="item"
           key={chat.chatId}
           onClick={() => handleSelect(chat)}
+          onContextMenu={(e) => handleContextMenu(e, chat)}
           style={{
             backgroundColor: chat?.isSeen ? "transparent" : "#5183fe",
           }}
@@ -116,6 +146,28 @@ const ChatList = () => {
       ))}
 
       {addMode && <AddUser />}
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="absolute bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg py-2"
+          style={{
+            top: `${contextMenu.y}px`,
+            left: `${contextMenu.x}px`,
+            zIndex: 1000,
+            minWidth: '150px',  
+          }}
+ 
+        >
+          <div 
+            onClick={handleDelete} 
+            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
+            >Delete</div>
+          <div 
+            onClick={handlePrioritize} 
+            className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer text-gray-800 dark:text-gray-200"
+            >Prioritize</div>
+        </div>
+)}
     </div>
   );
 };
