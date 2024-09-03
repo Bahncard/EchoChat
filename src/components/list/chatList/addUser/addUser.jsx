@@ -14,6 +14,8 @@ import {
 } from "firebase/firestore";
 import { useState } from "react";
 import { useUserStore } from "../../../../lib/userStore";
+import { toast } from "react-toastify";
+
 
 const AddUser = () => {
   const [user, setUser] = useState(null);
@@ -41,10 +43,32 @@ const AddUser = () => {
   };
 
   const handleAdd = async () => {
-    const chatRef = collection(db, "chats");
-    const userChatsRef = collection(db, "userchats");
+
 
     try {
+      // Check if a chat already exists
+      const currentUserChatsRef = doc(db, "userchats", currentUser.id);
+      const currentUserChatsSnap = await getDoc(currentUserChatsRef);
+
+      if (currentUserChatsSnap.exists()) {
+        const currentUserChats = currentUserChatsSnap.data().chats;
+        const existingChat = currentUserChats.find(chat => chat.receiverId === user.id);
+
+        if (existingChat) {
+          // Chat already exists, just switch to it 
+          //changeChat(existingChat.chatId, user);
+          toast.info("Chat already exists. Switched to existing chat.");
+          return;
+        }
+      }
+    
+
+      // If no existing chat, create a new one
+
+      //Get refs of collections to operate on
+      const chatRef = collection(db, "chats");
+      const userChatsRef = collection(db, "userchats");
+      
       const newChatRef = doc(chatRef);
 
       await setDoc(newChatRef, {
@@ -71,6 +95,7 @@ const AddUser = () => {
       });
     } catch (err) {
       console.log(err);
+      toast.error("An error occurred while adding the user");
     }
   };
 
